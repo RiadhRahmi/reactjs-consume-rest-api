@@ -1,22 +1,21 @@
-import React, {Component} from 'react';
-import Pagination from "react-js-pagination";
-import {Link, withRouter} from 'react-router-dom';
-import ArticleService from "../../services/articleService";
-import {exportAsExcelFile} from "../../services/excel";
-import Alert from "../shared/Alert";
-import $ from 'jquery';
-import RTDaterangepicker from "../shared/RTDaterangepicker";
+import React, {Component} from 'react'
+import Pagination from "react-js-pagination"
+import {Link, withRouter} from 'react-router-dom'
+import $ from 'jquery'
+import RTDaterangepicker from "../shared/RTDaterangepicker"
+import {AuthService} from "../../services/authService"
+import {BreadcrumbsItem} from 'react-breadcrumbs-dynamic'
+import {getArticles, deleteArticle, rechercheArticles, exportArticles} from "../../actions"
+import {connect} from 'react-redux'
+import Spinner from "../shared/Spinner";
+
 
 class ListArticle extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             pagetitle: 'List Articles',
-            showAlert: false,
-            colorAlert: 'success',
-            messageAlert: '',
-            articles: {},
             currentPage: 1,
             idArticle: '',
             searchArticle: {
@@ -27,53 +26,29 @@ class ListArticle extends Component {
             activePage: 1,
             pageRangeDisplayed: 8,
             idSelectedArticle: 0,
-        };
+        }
 
-        this.pageChange = this.pageChange.bind(this);
-        this.showArticle = this.showArticle.bind(this);
-        this.openModal = this.openModal.bind(this);
-        this.deleteArticle = this.deleteArticle.bind(this);
-        this.searchArticles = this.searchArticles.bind(this);
-        this.resetForm = this.resetForm.bind(this);
-        this.exportArticles = this.exportArticles.bind(this);
-        this.changeHandler = this.changeHandler.bind(this);
-        this.changeHandlerRTDaterangepicker = this.changeHandlerRTDaterangepicker.bind(this);
+        this.pageChange = this.pageChange.bind(this)
+        this.showArticle = this.showArticle.bind(this)
+        this.openModal = this.openModal.bind(this)
+        this.deleteArticle = this.deleteArticle.bind(this)
+        this.searchArticles = this.searchArticles.bind(this)
+        this.resetForm = this.resetForm.bind(this)
+        this.exportArticles = this.exportArticles.bind(this)
+        this.changeHandler = this.changeHandler.bind(this)
+        this.changeHandlerRTDaterangepicker = this.changeHandlerRTDaterangepicker.bind(this)
     }
 
     componentDidMount() {
-        this.getArticles(1);
-    }
-
-    getArticles(nbrePage) {
-        ArticleService.get(nbrePage).then(response => {
-            if (response.status === 200) {
-                this.setState({
-                    articles: response.data,
-                    showAlert: true,
-                    colorAlert: 'success',
-                    messageAlert: 'operation with success',
-                });
-
-            } else {
-                this.setState({
-                    showAlert: true,
-                    colorAlert: 'danger',
-                    messageAlert: 'failed operation',
-                });
-            }
-        }, error => {
-            this.setState({
-                showAlert: true,
-                colorAlert: 'danger',
-                messageAlert: 'failed operation' + error.toString(),
-            });
-        });
+        this.props.getArticles(1)
     }
 
 
     pageChange(pageNumber) {
-        this.getArticles(pageNumber);
-        this.setState({activePage: pageNumber});
+        this.props.getArticles(pageNumber)
+        this.setState({
+            activePage: pageNumber
+        })
 
     }
 
@@ -90,59 +65,15 @@ class ListArticle extends Component {
 
     deleteArticle() {
         $('#exampleModal').modal('hide')
-
-        ArticleService.delete(this.state.idSelectedArticle).then(response => {
-            if (response.status === 200) {
-                this.getArticles(this.state.activePage);
-                this.setState({
-                    showAlert: true,
-                    colorAlert: 'success',
-                    messageAlert: 'operation with success',
-                });
-
-            } else {
-                this.setState({
-                    showAlert: true,
-                    colorAlert: 'danger',
-                    messageAlert: 'failed operation',
-                });
-            }
-        }, error => {
-            this.setState({
-                showAlert: true,
-                colorAlert: 'danger',
-                messageAlert: 'failed operation' + error.toString()
-            });
-        });
-
+        this.props.deleteArticle(this.state.idSelectedArticle, this.state.activePage, this.props)
     }
 
     searchArticles() {
-        let data = this.state.searchArticle
-        ArticleService.recherche(data).then(response => {
-            if (response.status === 200) {
-                this.setState({
-                    articles: response.data
-                });
-            } else {
-                this.setState({
-                    showAlert: true,
-                    colorAlert: 'danger',
-                    messageAlert: 'failed operation',
-                });
-            }
-        }, error => {
-            this.setState({
-                showAlert: true,
-                colorAlert: 'danger',
-                messageAlert: 'failed operation' + error.toString(),
-            });
-        });
-
+        this.props.rechercheArticles(this.state.searchArticle)
     }
 
     resetForm(e) {
-        e.preventDefault();
+        e.preventDefault()
         this.setState({
             searchArticle: {
                 published_at: '',
@@ -150,47 +81,30 @@ class ListArticle extends Component {
                 author: ''
             }
         }, function () {
-            this.searchArticles();
-        });
+            this.searchArticles()
+        })
     }
 
     exportArticles(e) {
-        e.preventDefault();
+        e.preventDefault()
         const searchArticle = {
             title: this.state.searchArticle.title,
             published_at: this.state.searchArticle.published_at,
             author: this.state.searchArticle.author,
             export: true
         }
-
-        ArticleService.export(searchArticle).then(response => {
-            if (response.status === 200) {
-                exportAsExcelFile(response.data, 'articles');
-            } else {
-                this.setState({
-                    showAlert: true,
-                    colorAlert: 'danger',
-                    messageAlert: 'failed operation',
-                });
-            }
-        }, error => {
-            this.setState({
-                showAlert: true,
-                colorAlert: 'danger',
-                messageAlert: 'failed operation' + error.toString(),
-            });
-        });
+        this.props.exportArticles(searchArticle);
     }
 
     changeHandler(event) {
-        const name = event.target.name;
-        const value = event.target.value;
+        const name = event.target.name
+        const value = event.target.value
         this.setState({
             searchArticle: {
                 ...this.state.searchArticle,
                 [name]: value,
             }
-        });
+        })
     }
 
     changeHandlerRTDaterangepicker(value) {
@@ -199,16 +113,14 @@ class ListArticle extends Component {
                 ...this.state.searchArticle,
                 published_at: value,
             }
-        },function () {
-            console.log(value)
-        });
+        })
     }
 
 
     getDataArticles() {
-        let result;
-        if (this.state.articles === undefined || this.state.articles.total === undefined ||
-            this.state.articles.total === 0) {
+        let result
+        if (this.props.articles === undefined || this.props.articles.total === undefined ||
+            this.props.articles.total === 0) {
             result = (
                 <div className="row">
                     <div className="col-12 text-center">
@@ -217,9 +129,11 @@ class ListArticle extends Component {
                 </div>
             )
         } else {
+
+
             result = (
                 <div className="row">
-                    {this.state.articles.data.map(article =>
+                    {this.props.articles.data.map(article =>
                         <div className="col-4" key={article.id}>
                             <div className="card">
                                 <img className="card-img-top" src={article.image} alt={article.title}/>
@@ -240,16 +154,22 @@ class ListArticle extends Component {
                                             onClick={(e) => this.showArticle(article.id, e)}>
                                         <i className="fas fa-search"></i>
                                     </button>
-                                    <Link to={'/articles/' + article.id + '/edit'}
-                                          className="btn btn-success btn-sm mr-1">
-                                        <i className="far fa-edit"></i>
-                                    </Link>
-                                    <button
-                                        type="button" className="btn btn-danger btn-sm mr-1"
-                                        data-toggle="modal" data-target="#exampleModal"
-                                        onClick={(e) => this.openModal(article.id)}>
-                                        <i className="fas fa-trash"></i>
-                                    </button>
+                                    {AuthService.isRole('admin') ?
+                                        <Link to={'/articles/' + article.id + '/edit'}
+                                              className="btn btn-success btn-sm mr-1">
+                                            <i className="far fa-edit"></i>
+                                        </Link>
+                                        : ''}
+
+                                    {AuthService.isRole('admin') ?
+                                        <button
+                                            type="button" className="btn btn-danger btn-sm mr-1"
+                                            data-toggle="modal" data-target="#exampleModal"
+                                            onClick={(e) => this.openModal(article.id)}>
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                        : ''}
+
                                 </div>
                             </div>
                         </div>
@@ -262,10 +182,10 @@ class ListArticle extends Component {
     }
 
     getCountArticles() {
-        let nbreArticle = 0;
+        let nbreArticle = 0
 
-        if (this.state.articles !== undefined && this.state.articles.total !== undefined) {
-            nbreArticle = this.state.articles.total
+        if (this.props.articles !== undefined && this.props.articles.total !== undefined) {
+            nbreArticle = this.props.articles.total
         }
 
         nbreArticle = (
@@ -280,8 +200,8 @@ class ListArticle extends Component {
     }
 
     pager() {
-        let pager;
-        if (this.state.articles !== undefined && this.state.articles.total > this.state.articles.per_page) {
+        let pager
+        if (this.props.articles !== undefined && this.props.articles.total > this.props.articles.per_page) {
             pager = (
                 <div className="row mt-5">
                     <div className="col-12">
@@ -291,8 +211,8 @@ class ListArticle extends Component {
                             firstPageText='first'
                             lastPageText='last'
                             activePage={this.state.activePage}
-                            itemsCountPerPage={this.state.articles.per_page}
-                            totalItemsCount={this.state.articles.total}
+                            itemsCountPerPage={this.props.articles.per_page}
+                            totalItemsCount={this.props.articles.total}
                             pageRangeDisplayed={this.state.pageRangeDisplayed}
                             itemClass="page-item"
                             linkClass="page-link"
@@ -308,24 +228,17 @@ class ListArticle extends Component {
     }
 
 
-    alert() {
-        let alert;
-
-
-        if (this.state.showAlert === true) {
-            alert = (
-                <Alert color={this.state.colorAlert} message={this.state.messageAlert}/>
-            )
-        }
-
-        return alert
-    }
 
     render() {
 
+        if (this.props.loading) {
+            return <Spinner/>
+        }
 
         return (
+
             <div>
+                <BreadcrumbsItem to='/articles'>List Articles</BreadcrumbsItem>
                 <div className="row">
                     <div className="col-12">
                         <div className="pb-2 mt-4 mb-2 border-bottom">
@@ -339,7 +252,6 @@ class ListArticle extends Component {
                     </div>
                 </div>
 
-                {this.alert()}
 
                 <div className="row filter-search">
                     <div className="col-md-12">
@@ -380,22 +292,22 @@ class ListArticle extends Component {
                                         <div className="form-group  col-sm-12 col-md-2">
                                             <button className="btn btn-secondary btn-block"
                                                     onClick={(e) => {
-                                                        e.preventDefault();
+                                                        e.preventDefault()
                                                         this.searchArticles()
                                                     }}>
-                                                <i className="fas fa-search"></i>&nbsp;&nbsp;Recherche
+                                                <i className="fas fa-search"></i> Recherche
                                             </button>
                                         </div>
                                         <div className="form-group   col-sm-12 col-md-2">
                                             <button className="btn btn-secondary btn-block"
                                                     onClick={this.resetForm}>
-                                                <i className="fas fa-redo-alt"></i>&nbsp;&nbsp;Reset
+                                                <i className="fas fa-redo-alt"></i> Reset
                                             </button>
                                         </div>
                                         <div className="form-group col-sm-12 col-md-2">
                                             <button className="btn btn-secondary btn-block"
                                                     onClick={this.exportArticles}>
-                                                <i className="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+                                                <i className="fas fa-file-excel"></i> Export
                                             </button>
                                         </div>
                                     </div>
@@ -421,7 +333,7 @@ class ListArticle extends Component {
                                     Confirmation Delete Article
                                 </h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                    <span aria-hidden="true"> x </span>
                                 </button>
                             </div>
                             <div className="modal-body">
@@ -439,12 +351,29 @@ class ListArticle extends Component {
                         </div>
                     </div>
                 </div>
-
             </div>
-        );
+        )
     }
 
 
 }
 
-export default withRouter(ListArticle);
+
+const mapStateToProps = state => {
+    return {
+        loading: state.spinner.loading,
+        articles: state.article.articles,
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getArticles: (nbrePage) => dispatch(getArticles(nbrePage)),
+        deleteArticle: (id, nbrePage, ownProps) => dispatch(deleteArticle(id, nbrePage, ownProps)),
+        rechercheArticles: (data) => dispatch(rechercheArticles(data)),
+        exportArticles: (data) => dispatch(exportArticles(data)),
+    }
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListArticle))

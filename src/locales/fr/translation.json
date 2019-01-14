@@ -1,0 +1,9 @@
+{
+  "hello": "Bonjour le monde",
+  "title": "Titre",
+  "author": "Auteur",
+  "published_at": "Publié le",
+  "image": "Image",
+  "description": "Description",
+  "submit": "Envoyer"
+}

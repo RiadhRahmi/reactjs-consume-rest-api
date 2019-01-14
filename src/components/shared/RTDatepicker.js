@@ -2,13 +2,15 @@ import React, {Component} from 'react';
 import $ from 'jquery';
 import 'jquery-ui/themes/base/all.css';
 import 'jquery-ui/ui/widgets/datepicker.js';
+import PropTypes from "prop-types";
 
 class RTDatepicker extends Component {
 
-
     componentDidMount() {
         this.rtdatepicker = $(this.refs.datepicker);
-        this.rtdatepicker.datepicker();
+        this.rtdatepicker.datepicker({
+            dateFormat: 'd/m/yy'
+        });
 
         this.handleChange = this.handleChange.bind(this);
         this.rtdatepicker.on('change', this.handleChange);
@@ -20,7 +22,7 @@ class RTDatepicker extends Component {
     }
 
     handleChange(e) {
-        this.props.onChange(e.target.value);
+        this.props.onChange(e.target.value)
     }
 
     render() {
@@ -35,6 +37,16 @@ class RTDatepicker extends Component {
             onChange={this.handleChange}
         />;
     }
+}
+
+
+RTDatepicker.propTypes = {
+    rtdClassName: PropTypes.string,
+    rtdName: PropTypes.string,
+    rtdValue: PropTypes.string,
+    rtdPlaceholder: PropTypes.string,
+    rtdAutoComplete: PropTypes.string,
+    onChange: PropTypes.func,
 }
 
 export default RTDatepicker;

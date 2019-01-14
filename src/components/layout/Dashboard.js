@@ -177,36 +177,37 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <div className="row">
-                <div className="col-6">
-                    <div className="card m-2">
-                        <div className="card-body">
-                            <canvas ref="barChart" width="100%" height="200px"></canvas>
+
+                <div className="row">
+                    <div className="col-6">
+                        <div className="card m-2">
+                            <div className="card-body">
+                                <canvas ref="barChart" width="100%" height="200px"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-6">
+                        <div className="card m-2">
+                            <div className="card-body">
+                                <canvas ref={this.lineChart} width="100%" height="200px"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-6">
+                        <div className="card m-2">
+                            <div className="card-body">
+                                <canvas ref={this.pieChart} width="100%" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-6">
+                        <div className="card m-2">
+                            <div className="card-body">
+                                <canvas ref={this.radarChart} width="100%" height="600"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="col-6">
-                    <div className="card m-2">
-                        <div className="card-body">
-                            <canvas ref={this.lineChart} width="100%" height="200px"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-6">
-                    <div className="card m-2">
-                        <div className="card-body">
-                            <canvas ref={this.pieChart} width="100%" height="450"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-6">
-                    <div className="card m-2">
-                        <div className="card-body">
-                            <canvas ref={this.radarChart} width="100%" height="600"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
         );
     }
 }

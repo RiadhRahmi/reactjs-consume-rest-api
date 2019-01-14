@@ -1,32 +1,70 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import React, {Component} from 'react'
+import {NavLink, withRouter} from 'react-router-dom'
+import i18n from '../../i18n'
+import {withNamespaces} from 'react-i18next'
+import {logout} from "../../actions"
+import connect from "react-redux/es/connect/connect";
 
 
 class Header extends Component {
 
-    goBack() {
-        console.log('hello yes')
+    constructor(props) {
+        super(props)
+
+
+        this.logout = this.logout.bind(this)
+        this.toBack = this.toBack.bind(this)
     }
 
-    logout() {
-
+    toBack(e) {
+        e.preventDefault()
+        this.props.history.goBack()
     }
 
-    switchLanguage(langue) {
+
+    logout(e) {
+        e.preventDefault()
+        this.props.logout(this.props);
+    }
+
+
+    isActive(name) {
+        const ActiveClass = "active"
+        switch (name) {
+            case 'articles':
+                if (
+                    this.props.location.pathname === '/articles' ||
+                    this.props.location.pathname === '/articles/add'
+                ) {
+                    return ActiveClass
+                }
+                break
+            default:
+                return ''
+
+        }
+
+        return ''
     }
 
 
     render() {
+
+        const changeLanguage = (lng) => {
+            i18n.changeLanguage(lng)
+            localStorage.setItem('localeId', lng)
+        }
+
         return (
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 
-                <button type="button" className="btn btn-dark btn-sm" onClick={this.goBack}>
+                <button type="button" className="btn btn-dark btn-sm" onClick={this.toBack}>
                     <i className="fas fa-arrow-left"></i>
                 </button>
 
                 <div className="container">
 
-                    <Link to="/" className="navbar-brand" active-class="active">Home</Link>
+                    <NavLink exact to="/" className="navbar-brand">Home</NavLink>
 
                     <button className="navbar-toggler" type="button" data-toggle="collapse"
                             data-target="#navbarSupportedContent"
@@ -39,80 +77,75 @@ class Header extends Component {
                         <ul className="navbar-nav mr-auto">
 
                             <li className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle"
-                                   id="navbarDropdownUsers" role="button"
+                                <a href="#/" className="nav-link dropdown-toggle"
+                                   id="navbarDropdownUsers"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Users
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownUsers">
-                                    <Link className="dropdown-item" to="/users">
+                                    <NavLink exact className="dropdown-item" to="/users">
                                         List Users
-                                    </Link>
-                                    <Link className="dropdown-item" to="/users/add">
+                                    </NavLink>
+                                    <NavLink className="dropdown-item" to="/users/add">
                                         Add User
-                                    </Link>
+                                    </NavLink>
                                 </div>
                             </li>
 
                             <li className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle"
-                                   id="navbarDropdownArticles" role="button"
+                                <a href="#/" className={"nav-link dropdown-toggle " + (this.isActive('articles'))}
+                                   id="navbarDropdownArticles"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Articles
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownArticles">
-                                    <a className="dropdown-item" href="/articles">
+                                    <NavLink exact className="dropdown-item" to="/articles">
                                         List Articles
-                                    </a>
-                                    <a className="dropdown-item" href="/articles/add">
+                                    </NavLink>
+                                    <NavLink className="dropdown-item" to="/articles/add">
                                         Add Articles
-                                    </a>
+                                    </NavLink>
                                 </div>
                             </li>
 
                             <li className="nav-item">
-                                <a href="/axios" className="nav-link" active-class="active">Axios</a>
-                            </li>
-                            <li className="nav-item">
-                                <a href="/datatable" className="nav-link" active-class="active">DataTable
-                                </a>
-                            </li>
-
-                            <li className="nav-item">
-                                <a href="/vue-datatable" className="nav-link" active-class="active">Vue DataTable
-                                </a>
-                            </li>
-
-                            <li className="nav-item">
-                                <a href="/vuex" className="nav-link" active-class="active">Vuex</a>
+                                <NavLink to="/datatable" className="nav-link">
+                                    DataTable
+                                </NavLink>
                             </li>
                         </ul>
 
                         <ul className="navbar-nav ml-auto">
 
                             <li className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle"
-                                   id="navbarDropdownLanguage" role="button"
+                                <a href="#/" className="nav-link dropdown-toggle"
+                                   id="navbarDropdownLanguage"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Language
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownLanguage">
-                                    <a className="dropdown-item" onClick={this.switchLanguage('ar')}>Arabic</a>
-                                    <a className="dropdown-item" onClick={this.switchLanguage('fr')}>French</a>
-                                    <a className="dropdown-item" onClick={this.switchLanguage('en')}>English</a>
+                                    <button className="dropdown-item"
+                                            onClick={() => changeLanguage('ar')}>Arabic
+                                    </button>
+                                    <button className="dropdown-item"
+                                            onClick={() => changeLanguage('fr')}>French
+                                    </button>
+                                    <button className="dropdown-item"
+                                            onClick={() => changeLanguage('en')}>English
+                                    </button>
                                 </div>
                             </li>
 
                             <li className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle"
-                                   id="navbarDropdownMyAccount" role="button"
+                                <a href="#/" className="nav-link dropdown-toggle"
+                                   id="navbarDropdownMyAccount"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i className="fas fa-user"></i>
-                                    User Name
+                                    <i className="fas fa-user" style={{paddingRight: 10 + 'px'}}></i>
+                                    {this.props.currentUser.name}
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdownMyAccount">
-                                    <a className="dropdown-item" href="/profil">My Account</a>
-                                    <a className="dropdown-item" onClick={this.logout}>Logout</a>
+                                    <NavLink className="dropdown-item" to="/profil">My Account</NavLink>
+                                    <button className="dropdown-item" onClick={this.logout}>Logout</button>
                                 </div>
                             </li>
                         </ul>
@@ -121,10 +154,24 @@ class Header extends Component {
                 </div>
             </nav>
 
-        );
+        )
     }
 
 
 }
 
-export default Header;
+
+const mapStateToProps = state => {
+    return {
+        currentUser: state.auth.currentUser
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        logout: (ownProps) => dispatch(logout(ownProps)),
+    }
+}
+
+
+export default withNamespaces()(withRouter(connect(mapStateToProps, mapDispatchToProps)(Header)))

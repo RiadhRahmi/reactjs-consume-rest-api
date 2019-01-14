@@ -10,7 +10,7 @@ export default {
     return apiClient.post('users', user);
   },
   update(id, user) {
-    return apiClient.update('users/' + id + '/update', user);
+    return apiClient.post('users/' + id + '/update', user);
   },
   get() {
     return apiClient.get('users');

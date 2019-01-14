@@ -47,3 +47,14 @@ canvas {
     height: 400px !important;
 
 }
+
+a {
+    cursor: pointer;
+}
+
+.invalid-feedback {
+    display: block;
+}
+
+
+
