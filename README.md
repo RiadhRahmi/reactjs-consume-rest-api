@@ -1,7 +1,7 @@
 # Example how to Consume <a href="https://github.com/RiadhRahmi/example-api-laravel" target="_blank"> REST API </a>  with React 
 
 
-<img src="https://liip.rokka.io/www_articlebig/d26ceb73b017347a8f77f52c17a467a7bef1b397/contrasts-between-drupal-7-8.jpg" />
+<img src="https://liip.rokka.io/www_articlebig/d26ceb73b017347a8f77f52c17a467a7bef1b397/contrasts-between-drupal-7-8.jpg" width="100%" />
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
