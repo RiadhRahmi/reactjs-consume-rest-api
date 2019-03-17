@@ -1,6 +1,6 @@
 # Example how to Consume <a href="https://github.com/RiadhRahmi/example-api-laravel" target="_blank"> REST API </a>  with React 
 
-<video src="https://drive.google.com/open?id=12URpehYzD1UihKD8rqyD0OhwJTfLhRrF" width="100%"></video>
+<iframe src="https://drive.google.com/open?id=12URpehYzD1UihKD8rqyD0OhwJTfLhRrF" width="100%"></iframe>
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
